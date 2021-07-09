@@ -1,9 +1,3 @@
 # parciales
-Parciales ejercicios
-
-Comentario de AK
-
-2
-3
-4
-
+##Parciales ejercicios
+**Parciales de Algoritmos I**
