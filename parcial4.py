@@ -42,3 +42,103 @@
 # Luego del último pedido del día, el sistema deberá informar cual fue la facturación del día y cuál fue elNº de pedido en el cual se produjo la venta mas grande, indicando su importe.
 # Nota: Los importes unitarios de cada uno de los productos deben ser definidos como constantes en el programa, a gusto de cada uno de los programadores.
 # Nota 2: El sistema NO debe preguntar al cliente cuanto quiere de cada artículo, sino que el usuario debe indicar que quiere pedir y cuánto.
+PIZZAS = {
+    1: ['Muzzarella vegana', 240],
+    2: ['Fugazzetta vegana', 200],
+    3: ['Napolitana vegana', 330]
+}
+def validar_opcion()->str:
+    opcion = input('Ingrese si o no: ')
+    while not (opcion.isalpha() and opcion == 'si' or opcion == 'no'):
+        opcion = input('Error de ingreso. Vuelva a ingresar: ')
+    return opcion
+
+def validar_pedido()->int:
+    pedido = input('Ingrese que pizza desea: ')
+    while not (pedido.isnumeric() and int(pedido)>=1 and int(pedido)<=3):
+        pedido = input('Ingresaste una opcion incorrecta. Vuelva a intentarlo: ')
+    pedido = int(pedido)
+    return pedido    
+
+def facturacion(pedido_dia)->tuple:
+    total_del_dia = 0
+    for values in pedido_dia.values():
+        total_del_dia += values[1]
+
+    return total_del_dia    
+
+def descuento(precio_total:int)->float:
+    if precio_total > 500:
+        precio_reducido = (precio_total * 10) / 100
+    return precio_reducido     
+
+def ticket(pedido:list,contador_cliente:int)->list: #pedido es [[3,240],[1,400],[3,500]]
+    precios = []
+    nombre_pizza = []
+    precio_total = 0
+    pedido_cliente = {1:0,2:0,3:0}
+    numero_cliente = contador_cliente
+    for values in PIZZAS.values():
+        precios.append(values[1])
+        nombre_pizza.append(values[0])
+    for cada_pedido in pedido:
+        for key in pedido_cliente.keys():
+            if cada_pedido[0] == key:
+                suma = pedido_cliente.get(key)
+                suma += cada_pedido[1]
+                pedido_cliente[key] = suma
+    for key,values in pedido_cliente.items():
+        if key == 1:
+            resultado1 = values / precios[0]
+        elif key == 2:
+            resultado2 = values / precios[1]    
+        elif key == 3:
+            resultado3 = values / precios[2] 
+    if precio_total >500:
+        precio_total = descuento(precio_total)
+    print(f'''\tN° de cliente: {numero_cliente}
+        {resultado1} : {nombre_pizza[0]}...........{pedido_cliente.get(1)}
+        {resultado2} : {nombre_pizza[1]}...........{pedido_cliente.get(2)}
+        {resultado3} : {nombre_pizza[2]}...........{pedido_cliente.get(3)}
+
+                                                Total = {precio_total}''')     
+
+def pedir_pedido()->None:
+    pedidos_clientes = {} # { 1: [[3,precio],[1,precio]], 2: [[1,precio],[3,precio]]}
+    contador_cliente = 0
+    init_pedido = False
+    while not init_pedido:
+        print('Desea cerrar la pizzeria')
+        cerrar_pizzeria = validar_opcion()
+        if cerrar_pizzeria == 'si':
+            init_pedido = True
+            return pedidos_clientes
+        else:
+            contador_cliente += 1
+            p = [] #[[3,1],[1,1]]
+            init_cliente = False
+            while not init_cliente:
+                print('\t-- Bienvenido a pizzana --')
+                print('1. Pizza muzzarella vegana -> $240')
+                print('2. Pizza Fugazzeta vegana -> $200')
+                print('3. Pizza Napolitana vegana -> $330\n')
+                pedido = validar_pedido()
+                cantidad_pedido = int(input('Ingrese cantidad: '))
+                print('Desea seguir pidiendo?')
+                continuar = validar_opcion()
+                if continuar == 'si': #condicion continuar pedido
+                    precio = PIZZAS.get(pedido)
+                    total = cantidad_pedido*precio[1]
+                    p.append([pedido,total])
+                elif continuar == 'no': #condicion finalizar pedido
+                    init_cliente = True
+                    precio = PIZZAS.get(pedido)
+                    total = cantidad_pedido*precio[1]
+                    p.append([pedido,total])
+                    pedidos_clientes[contador_cliente] = [p]   
+                    ticket(p,contador_cliente)
+
+def main():
+    todos_los_pedidos = pedir_pedido()
+    print(facturacion(todos_los_pedidos))
+main()    

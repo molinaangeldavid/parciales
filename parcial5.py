@@ -26,3 +26,6 @@
 # contar_palabra("gagigoyxgato") -> 1
 # contar_palabra("gaxioogaittogaaioo") -> 2
 # contar_palabra("gaittoagatitoggaiioo") -> 2 
+def main()->None:
+    pass
+main()    
